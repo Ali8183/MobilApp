@@ -5,17 +5,34 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { FontAwesome5 } from '@expo/vector-icons';
 
 // ==========================================
+// BACKEND API AYARLARI
+// ==========================================
+const API_URL = 'http://10.28.60.89:5000';
+
+// ==========================================
 // 1. EKRAN: GİRİŞ SAYFASI (Doğrulama Eklendi)
 // ==========================================
 const LoginScreen = ({ navigation }) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
-  const handleLogin = () => {
+  const handleLogin = async () => {
     if (username === '' || password === '') {
       Alert.alert("Hata", "Lütfen kullanıcı adı ve şifre giriniz.");
     } else {
-      navigation.navigate('Home');
+      try {
+        // Backend'e test isteği gönder
+        const response = await fetch(`${API_URL}/`, {
+          method: 'GET',
+        });
+        const data = await response.text();
+        console.log('Backend Yanıt:', data);
+        Alert.alert("Başarılı", "Backend'e bağlantı kuruldu!\n" + data);
+        navigation.navigate('Home');
+      } catch (error) {
+        Alert.alert("Bağlantı Hatası", "Backend'e erişilemedi:\n" + error.message);
+        console.log('Hata:', error);
+      }
     }
   };
 
